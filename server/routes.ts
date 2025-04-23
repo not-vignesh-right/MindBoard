@@ -43,22 +43,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Get or create user
       let user;
-      if (username && username !== "Guest") {
-        const existingUser = await storage.getUserByUsername(username);
+      if (username && username !== "Guest" && username.trim() !== "") {
+        // Normalize username (trim whitespace, limit length if needed)
+        const normalizedUsername = username.trim().substring(0, 30);
+        
+        // Check for existing user with this username
+        const existingUser = await storage.getUserByUsername(normalizedUsername);
         if (existingUser) {
           user = existingUser;
+          console.log(`Using existing user: ${normalizedUsername}, ID: ${user.id}`);
         } else {
+          // Create new user with this username
           user = await storage.createUser({
-            username,
+            username: normalizedUsername,
             password: "guest", // Default password for guest users
           });
+          console.log(`Created new user: ${normalizedUsername}, ID: ${user.id}`);
         }
       } else {
-        // Create anonymous user
+        // Create anonymous user with unique name
+        const guestUsername = `Guest_${Date.now().toString().slice(-6)}`;
         user = await storage.createUser({
-          username: `Guest_${Date.now()}`,
+          username: guestUsername,
           password: "guest",
         });
+        console.log(`Created anonymous user: ${guestUsername}, ID: ${user.id}`);
       }
       
       // Generate creative prompt

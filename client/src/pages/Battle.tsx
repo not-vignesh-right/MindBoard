@@ -24,7 +24,7 @@ export default function BattlePage() {
   const timerRef = useRef<any>(null);
   
   // Get battle data
-  const { data: battle, isLoading: isBattleLoading, error } = useQuery({
+  const { data: battle, isLoading: isBattleLoading, error } = useQuery<Battle>({
     queryKey: [`/api/battles/${battleId}`],
     enabled: !!battleId
   });

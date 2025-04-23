@@ -21,28 +21,43 @@ console.log("Offline Mode:", FORCE_OFFLINE_MODE ? "Enabled" : "Disabled");
  * Generate a creative prompt for a battle
  */
 export async function generatePrompt(): Promise<string> {
-  // Fallback prompts in case the API fails or in offline mode
+  // Fallback prompts in case the API fails or in offline mode - with more tech focus
   const fallbackPrompts = [
-    "Design a flying classroom that can travel anywhere in the world",
-    "Create a device that helps people remember their dreams",
-    "Invent a new sport that combines three existing sports",
-    "Design a restaurant concept for the year 2050",
-    "Create a new musical instrument that uses unconventional materials",
-    "Design a sustainable home that could exist in extreme weather conditions",
-    "Invent a new holiday and its traditions",
-    "Create a transportation system for a city built underwater",
-    "Design a device that translates animal communication into human language",
-    "Create a new form of art that engages all five senses",
-    "Design an AI assistant for elderly people living alone",
+    // Technology & Computing Prompts
+    "Design a new programming language that uses natural human gestures instead of typing",
+    "Create a computer interface for people who have no hands or mobility",
+    "Design a smart city infrastructure that respects privacy while enhancing safety",
+    "Invent a new social media platform that promotes genuine human connection",
+    "Design an AI assistant for mental health that respects ethical boundaries",
+    "Create a digital solution to combat misinformation that doesn't restrict free speech",
+    "Design a technology that helps preserve endangered languages",
+    "Invent a new cryptocurrency that solves current blockchain environmental issues",
+    "Design a system that makes complex data visualizations accessible to blind users",
+    "Create a technology that lets people experience each other's emotions remotely",
+    
+    // Science & Innovation Prompts
+    "Design a device that could capture and store carbon dioxide from the atmosphere",
+    "Create a renewable energy solution for areas with extreme weather conditions",
+    "Invent a material that could replace plastic in all common applications",
+    "Design a sustainable water purification system for remote communities",
     "Create a solution for managing e-waste in urban environments",
     "Design a novel renewable energy technology for individual homes",
-    "Invent a new type of social media platform focused on meaningful connections",
-    "Design a futuristic learning tool for teaching complex topics to children",
-    "Create a system that helps people develop healthy habits",
+    "Invent a new type of battery with 10x current capacity",
     "Design a device that enhances human productivity through neural interfaces",
     "Create a new form of agriculture suitable for Mars colonization",
-    "Design a digital tool that preserves indigenous knowledge and languages",
-    "Invent a new encryption method using biological principles"
+    "Invent a new encryption method using biological principles",
+    
+    // AI & Future Tech Prompts
+    "Design an AI system that could help predict and prevent natural disasters",
+    "Create a fair and transparent algorithm for college admissions",
+    "Invent a new type of quantum computing application for everyday use",
+    "Design a robot that could help restore damaged ecosystems",
+    "Create an AI that can translate animal communication to human language",
+    "Design a virtual reality experience that helps people overcome phobias",
+    "Invent a new form of digital democracy that increases participation",
+    "Design an AI system that creates personalized learning experiences",
+    "Create a technology that helps preserve human knowledge for 10,000 years",
+    "Invent a new way to archive digital information that doesn't degrade"
   ];
   
   // If in offline mode, use fallback prompts without API call
@@ -345,26 +360,63 @@ export async function evaluateBattle(data: EvaluationRequest): Promise<Evaluatio
   try {
     console.log("Evaluating battle using Grok...");
     
-    // Use Grok to evaluate the solutions
+    // Use Grok to evaluate the solutions with improved judgment criteria
     const response = await xai.chat.completions.create({
       model: "grok-2-1212",
       messages: [
         { 
           role: "system", 
-          content: `Rate two creative solutions. For each, score:
-          1. Originality (0-100)
-          2. Logic (0-100)
-          3. Expression (0-100)
-          Add brief feedback for each category. Calculate total score. Higher score wins. Output JSON only.`
+          content: `You are an expert judge evaluating creative solutions to technical challenges. 
+          Rate two solutions (User and AI) on three criteria:
+          
+          1. Originality (0-100): Novelty, uniqueness, and creative thinking
+             - High scores: Truly innovative ideas that haven't been widely implemented
+             - Low scores: Common or derivative approaches with little innovation
+          
+          2. Logic (0-100): Practicality, feasibility, and sound reasoning
+             - High scores: Well-thought-out solutions that could be implemented
+             - Low scores: Impractical ideas with major logical flaws
+          
+          3. Expression (0-100): Clarity, engagement, and effective communication
+             - High scores: Clear, concise, and compelling communication
+             - Low scores: Confusing, verbose, or poorly structured writing
+          
+          For each category, provide specific, constructive feedback (2-3 sentences).
+          Calculate the total score for each solution (sum of all three categories).
+          Determine the winner based on the higher total score.
+          
+          Return your evaluation in JSON format only with this structure:
+          {
+            "userScore": {
+              "originality": number,
+              "logic": number,
+              "expression": number,
+              "originalityFeedback": string,
+              "logicFeedback": string,
+              "expressionFeedback": string,
+              "total": number
+            },
+            "aiScore": {
+              "originality": number,
+              "logic": number,
+              "expression": number,
+              "originalityFeedback": string,
+              "logicFeedback": string,
+              "expressionFeedback": string,
+              "total": number
+            },
+            "judgeFeedback": string,
+            "winner": "user" or "ai"
+          }`
         },
         {
           role: "user",
-          content: `Prompt: ${data.prompt}\nUser: ${data.userSolution}\nAI: ${data.aiSolution}`
+          content: `Prompt: ${data.prompt}\n\nUser Solution: ${data.userSolution}\n\nAI Solution: ${data.aiSolution}`
         }
       ],
-      temperature: 0.5,
+      temperature: 0.4, // Lower temperature for more consistent evaluations
       response_format: { type: "json_object" },
-      max_tokens: 600
+      max_tokens: 800 // Increased to allow for more detailed feedback
     });
 
     // Handle possible null response

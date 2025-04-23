@@ -18,12 +18,15 @@ Welcome to **MindBoard**, a real-time multiplayer creativity battle platform whe
 |-----------------------------|------------|------------------|
 | Battle AI or real players   | ✅         |                  |
 | Prompt-based challenges     | ✅         | Category Filters |
-| Timed writing (3 min)       | ✅         | Adjustable Timer |
+| Timed writing (2.5 min)     | ✅         | Adjustable Timer |
 | AI evaluation (Grok)        | ✅         | Visual Feedback  |
 | Leaderboard system          | ✅         | Weekly Rewards   |
 | User login & guest mode     | ✅         | Full Profiles    |
 | Mobile responsive UI        | ✅         | Mobile App (RN)  |
-| Score breakdown + AI comments | ✅      | Voice Input 🎤   |
+| Score breakdown + AI comments | ✅       | Voice Input 🎤   |
+| Fixed timer (2.5 min)       | ✅         | Custom Timers    |
+| Proper username handling    | ✅         | Profile Images   |
+| Auto-submit when time's up  | ✅         | Save Drafts      |
 | Real-time multiplayer       |            | ✅ Coming Soon!  |
 
 ---
@@ -33,7 +36,7 @@ Welcome to **MindBoard**, a real-time multiplayer creativity battle platform whe
 1. **Enter the Arena** as a guest or user.
 2. **Get a Creative Prompt** like:  
    _"Invent a sport for zero-gravity planets."_  
-3. **Write Your Response** in 3 minutes.
+3. **Write Your Response** in just 2.5 minutes.
 4. **AI Battles Back** if you're vs Grok.
 5. **Both Are Scored** on:
    - Originality 💡
