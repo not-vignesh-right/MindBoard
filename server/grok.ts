@@ -11,7 +11,7 @@ const xai = new OpenAI({
 
 // Set this to false to use the API with real calls
 // Set this to true for testing without API calls
-const FORCE_OFFLINE_MODE = false;
+const FORCE_OFFLINE_MODE = true;
 
 // Log API key status (without revealing the key)
 console.log("xAI API Key Status:", process.env.XAI_API_KEY ? "Present" : "Missing");

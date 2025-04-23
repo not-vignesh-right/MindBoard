@@ -25,6 +25,7 @@ export const battles = pgTable("battles", {
   aiScore: integer("ai_score"),
   userWon: boolean("user_won"),
   completed: boolean("completed").default(false),
+  opponentType: text("opponent_type").default("ai"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -44,6 +45,12 @@ export const scores = pgTable("scores", {
   aiLogic: integer("ai_logic"),
   aiExpression: integer("ai_expression"),
   judgeFeedback: text("judge_feedback"),
+  userOriginalityFeedback: text("user_originality_feedback"),
+  userLogicFeedback: text("user_logic_feedback"),
+  userExpressionFeedback: text("user_expression_feedback"),
+  aiOriginalityFeedback: text("ai_originality_feedback"),
+  aiLogicFeedback: text("ai_logic_feedback"),
+  aiExpressionFeedback: text("ai_expression_feedback"),
 });
 
 export const insertScoreSchema = createInsertSchema(scores).omit({
