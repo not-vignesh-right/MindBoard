@@ -110,7 +110,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Submit user solution
   app.post("/api/battles/:id/submit", async (req: Request, res: Response) => {
     const schema = z.object({
-      solution: z.string().min(10),
+      solution: z.string().min(1), // Lower minimum requirement to handle auto-submissions
+      isAutoSubmit: z.boolean().optional()
     });
 
     try {
@@ -119,7 +120,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid battle ID" });
       }
       
-      const { solution } = schema.parse(req.body);
+      const { solution, isAutoSubmit } = schema.parse(req.body);
+      
+      // For non-auto submissions, ensure the solution is substantial
+      if (!isAutoSubmit && solution.trim().length < 10) {
+        return res.status(400).json({ 
+          message: "Solution is too short. Please provide a more substantial response." 
+        });
+      }
       
       // Get battle
       const battle = await storage.getBattle(battleId);

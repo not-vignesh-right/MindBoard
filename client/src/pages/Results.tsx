@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import Leaderboard from "@/components/Leaderboard";
 import LoadingOverlay from "@/components/LoadingOverlay";
 import ScoreBar from "@/components/ScoreBar";
+import { Battle, BattleResult } from "@/lib/types";
 
 export default function Results() {
   const { id } = useParams();
@@ -13,16 +14,49 @@ export default function Results() {
   const { username } = useContext(UserContext);
   const battleId = Number(id);
 
-  const { data: results, isLoading } = useQuery({
-    queryKey: [`/api/battles/${battleId}/results`],
-    enabled: !!battleId
+  // Query battle data to check for completion
+  const { data: battleData, isLoading: battleLoading } = useQuery<Battle>({
+    queryKey: [`/api/battles/${battleId}`],
+    enabled: !!battleId,
+    refetchInterval: 2000, // Refetch every 2 seconds to check for updates
+    retry: 3
   });
 
+  // Only query results if the battle exists and is completed
+  const { data: resultsData, isLoading: resultsLoading } = useQuery<BattleResult>({
+    queryKey: [`/api/battles/${battleId}/results`],
+    enabled: !!battleId && !!battleData?.completed,
+    retry: 3
+  });
+
+  const isLoading = battleLoading || (battleData?.completed && resultsLoading);
+
   if (isLoading) {
-    return <LoadingOverlay message="Loading results..." description="Please wait while we gather the judging results" />;
+    return <LoadingOverlay 
+      message="Analyzing creative solutions..." 
+      description="Please wait while our AI judge evaluates both solutions. This may take a moment." 
+    />;
   }
 
-  if (!results) {
+  // If battle exists but isn't completed yet
+  if (battleData && !battleData.completed) {
+    return (
+      <div className="text-center py-16">
+        <h2 className="text-2xl font-bold mb-4">Battle in Progress</h2>
+        <p className="text-gray-600 mb-8">
+          The AI is still evaluating the solutions. This should only take a moment.
+          <br/>The page will automatically update when results are ready.
+        </p>
+        <div className="animate-pulse w-24 h-24 mx-auto mb-6 text-primary opacity-70">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+          </svg>
+        </div>
+      </div>
+    );
+  }
+
+  if (!battleData || !resultsData) {
     return (
       <div className="text-center py-16">
         <h2 className="text-2xl font-bold">Results not found</h2>
@@ -32,7 +66,7 @@ export default function Results() {
     );
   }
   
-  const { battle, scores } = results;
+  const { battle, scores } = resultsData;
   const userWon = battle.userWon;
   const displayOpponentType = battle.opponentType === "ai" ? "AI Opponent" : "Human Opponent";
 

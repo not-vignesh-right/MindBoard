@@ -32,13 +32,12 @@ export default function BattlePage() {
 
   // Submit solution mutation
   const submitSolutionMutation = useMutation({
-    mutationFn: async () => {
-      // Ensure solution is at least 10 characters (requirement from backend)
-      const validSolution = userSolution.trim().length >= 10 ? 
-        userSolution : 
-        userSolution + " " + "This is my creative solution.";
-        
-      return await apiRequest("POST", `/api/battles/${battleId}/submit`, { solution: validSolution });
+    mutationFn: async (isAutoSubmit: boolean) => {
+      // Use solution as-is, the backend will handle validation
+      return await apiRequest("POST", `/api/battles/${battleId}/submit`, { 
+        solution: userSolution,
+        isAutoSubmit
+      });
     },
     onSuccess: async (res) => {
       const data = await res.json();
@@ -115,7 +114,7 @@ export default function BattlePage() {
     if (timerRef.current) {
       timerRef.current.stopTimer();
     }
-    submitSolutionMutation.mutate();
+    submitSolutionMutation.mutate(autoSubmit);
   };
 
   // Handle timer expiration
