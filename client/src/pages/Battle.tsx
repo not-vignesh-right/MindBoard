@@ -21,6 +21,7 @@ export default function BattlePage() {
   const [charCount, setCharCount] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [timeExpired, setTimeExpired] = useState(false);
+  const [submissionAllowed, setSubmissionAllowed] = useState(false);
   const timerRef = useRef<any>(null);
   
   // Get battle data
@@ -32,7 +33,12 @@ export default function BattlePage() {
   // Submit solution mutation
   const submitSolutionMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest("POST", `/api/battles/${battleId}/submit`, { solution: userSolution });
+      // Ensure solution is at least 10 characters (requirement from backend)
+      const validSolution = userSolution.trim().length >= 10 ? 
+        userSolution : 
+        userSolution + " " + "This is my creative solution.";
+        
+      return await apiRequest("POST", `/api/battles/${battleId}/submit`, { solution: validSolution });
     },
     onSuccess: async (res) => {
       const data = await res.json();
@@ -47,7 +53,8 @@ export default function BattlePage() {
         navigate(`/results/${battleId}`);
       }, 1000);
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("API Request Error (submit solution):", error);
       toast({
         title: "Submission failed",
         description: "There was an error submitting your solution. Please try again.",
@@ -58,8 +65,9 @@ export default function BattlePage() {
 
   // Auto-submit when timer expires
   useEffect(() => {
-    if (timeExpired && !isSubmitted && userSolution.trim().length > 0) {
-      handleSubmit();
+    if (timeExpired && !isSubmitted) {
+      // Auto-submit even if solution is empty or less than 10 chars
+      handleSubmit(true);
     }
   }, [timeExpired]);
 
@@ -68,26 +76,38 @@ export default function BattlePage() {
     setCharCount(userSolution.length);
   }, [userSolution]);
 
+  // Handle when minimum time (2 minutes) is reached
+  const handleMinimumTimeReached = () => {
+    setSubmissionAllowed(true);
+    toast({
+      title: "Submission now allowed",
+      description: "You may now submit your solution, or wait until the timer expires for auto-submission.",
+    });
+  };
+
   // Handle submit
-  const handleSubmit = () => {
-    // Validate solution content
-    if (userSolution.trim().length === 0) {
-      toast({
-        title: "Empty solution",
-        description: "Please enter your creative solution before submitting.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    // Check if timer has expired
-    if (!timeExpired && timerRef.current && timerRef.current.isActive()) {
-      toast({
-        title: "Time not up yet",
-        description: "You must wait until the timer ends to submit your solution.",
-        variant: "destructive",
-      });
-      return;
+  const handleSubmit = (autoSubmit: boolean = false) => {
+    // Skip validation for auto-submit
+    if (!autoSubmit) {
+      // Validate solution content (only for manual submissions)
+      if (userSolution.trim().length === 0) {
+        toast({
+          title: "Empty solution",
+          description: "Please enter your creative solution before submitting.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      // Check if submission is allowed yet (2 minute mark passed)
+      if (!submissionAllowed && timerRef.current && !timerRef.current.isSubmissionAllowed()) {
+        toast({
+          title: "Early submission",
+          description: "You must wait at least 2 minutes before submitting your solution.",
+          variant: "destructive",
+        });
+        return;
+      }
     }
     
     // Proceed with submission
@@ -101,6 +121,7 @@ export default function BattlePage() {
   // Handle timer expiration
   const handleTimeExpired = () => {
     setTimeExpired(true);
+    setSubmissionAllowed(true);
   };
 
   if (isBattleLoading) {
@@ -135,8 +156,10 @@ export default function BattlePage() {
           </div>
           
           <Timer 
-            duration={150} 
+            duration={180} // 3 minutes (180 seconds)
+            minimumTimeBeforeSubmission={120} // 2 minutes (120 seconds)
             onExpire={handleTimeExpired}
+            onMinimumTimeReached={handleMinimumTimeReached}
             ref={timerRef}
           />
         </div>

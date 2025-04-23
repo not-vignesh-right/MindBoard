@@ -9,7 +9,7 @@ interface BattleCardProps {
   isSubmitted?: boolean;
   solution?: string;
   onSolutionChange?: (value: string) => void;
-  onSubmit?: () => void;
+  onSubmit?: (autoSubmit?: boolean) => void;
   charCount?: number;
   isSubmitting?: boolean;
 }
@@ -54,7 +54,7 @@ export default function BattleCard({
               </div>
               <Button 
                 className={`${bgColor} hover:bg-opacity-90 text-white font-bold py-2 px-6 rounded-lg transition duration-300`}
-                onClick={onSubmit}
+                onClick={() => onSubmit?.(false)} // Pass false to indicate it's not an auto-submit
                 disabled={isSubmitted || solution.trim().length === 0 || isSubmitting}
               >
                 {isSubmitting ? "Submitting..." : "Submit Solution"}

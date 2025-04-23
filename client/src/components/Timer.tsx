@@ -3,12 +3,20 @@ import { useState, useEffect, useImperativeHandle, forwardRef, useCallback } fro
 interface TimerProps {
   duration: number;
   onExpire: () => void;
+  onMinimumTimeReached?: () => void;
+  minimumTimeBeforeSubmission?: number;
 }
 
-const Timer = forwardRef(({ duration, onExpire }: TimerProps, ref) => {
+const Timer = forwardRef(({ 
+  duration, 
+  onExpire, 
+  onMinimumTimeReached,
+  minimumTimeBeforeSubmission = 120 // Default 2 minutes before allowing submission
+}: TimerProps, ref) => {
   const [timeRemaining, setTimeRemaining] = useState(duration);
   const [timerActive, setTimerActive] = useState(true);
   const [timerStarted, setTimerStarted] = useState(false);
+  const [submissionAllowed, setSubmissionAllowed] = useState(false);
   
   // For circle animation
   const circumference = 283; // 2 * pi * 45 (circle radius)
@@ -16,14 +24,26 @@ const Timer = forwardRef(({ duration, onExpire }: TimerProps, ref) => {
   // Handle timer expiration
   const handleTimerExpire = useCallback(() => {
     setTimerActive(false);
+    setSubmissionAllowed(true);
     onExpire();
   }, [onExpire]);
+  
+  // Handle minimum time reached
+  const handleMinimumTimeReached = useCallback(() => {
+    setSubmissionAllowed(true);
+    if (onMinimumTimeReached) {
+      onMinimumTimeReached();
+    }
+  }, [onMinimumTimeReached]);
   
   // Initialize timer
   useEffect(() => {
     if (!timerStarted) {
-      setTimeRemaining(duration);
-      setTimerStarted(true);
+      // Initialize in useEffect to avoid React warnings
+      setTimeout(() => {
+        setTimeRemaining(duration);
+        setTimerStarted(true);
+      }, 0);
     }
   }, [duration, timerStarted]);
   
@@ -34,12 +54,21 @@ const Timer = forwardRef(({ duration, onExpire }: TimerProps, ref) => {
     if (timerActive && timeRemaining > 0) {
       interval = setInterval(() => {
         setTimeRemaining(prevTime => {
-          if (prevTime <= 1) {
+          const newTime = prevTime - 1;
+          
+          // Check if we've reached the minimum time for submission
+          if (newTime === duration - minimumTimeBeforeSubmission) {
+            handleMinimumTimeReached();
+          }
+          
+          // Check if timer has expired
+          if (newTime <= 0) {
             if (interval) clearInterval(interval);
             handleTimerExpire();
             return 0;
           }
-          return prevTime - 1;
+          
+          return newTime;
         });
       }, 1000);
     }
@@ -47,14 +76,15 @@ const Timer = forwardRef(({ duration, onExpire }: TimerProps, ref) => {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [timerActive, timeRemaining, handleTimerExpire]);
+  }, [timerActive, timeRemaining, handleTimerExpire, handleMinimumTimeReached, duration, minimumTimeBeforeSubmission]);
   
   useImperativeHandle(ref, () => ({
     stopTimer: () => {
       setTimerActive(false);
     },
     getTimeRemaining: () => timeRemaining,
-    isActive: () => timerActive
+    isActive: () => timerActive,
+    isSubmissionAllowed: () => submissionAllowed
   }));
   
   // Format time as MM:SS
