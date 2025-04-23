@@ -70,6 +70,7 @@ export default function BattlePage() {
 
   // Handle submit
   const handleSubmit = () => {
+    // Validate solution content
     if (userSolution.trim().length === 0) {
       toast({
         title: "Empty solution",
@@ -79,6 +80,17 @@ export default function BattlePage() {
       return;
     }
     
+    // Check if timer has expired
+    if (!timeExpired && timerRef.current && timerRef.current.isActive()) {
+      toast({
+        title: "Time not up yet",
+        description: "You must wait until the timer ends to submit your solution.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Proceed with submission
     setIsSubmitted(true);
     if (timerRef.current) {
       timerRef.current.stopTimer();
@@ -123,7 +135,7 @@ export default function BattlePage() {
           </div>
           
           <Timer 
-            duration={180} 
+            duration={150} 
             onExpire={handleTimeExpired}
             ref={timerRef}
           />

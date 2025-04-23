@@ -1,26 +1,25 @@
 {
   "version": 2,
-  "builds": [
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "rewrites": [
     {
-      "src": "package.json",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "vite.config.ts",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist/public"
-      }
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
     }
   ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "dist/index.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "dist/public/$1"
+  "functions": {
+    "api/**/*.ts": {
+      "memory": 1024
     }
-  ]
+  },
+  "env": {
+    "NODE_ENV": "production",
+    "FORCE_OFFLINE_MODE": {
+      "development": "true",
+      "preview": "false",
+      "production": "false"
+    }
+  }
 }

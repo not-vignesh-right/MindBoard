@@ -20,19 +20,29 @@ export default function Home() {
   const [location, navigate] = useLocation();
   const { username, setUsername } = useContext(UserContext);
   const [showNameDialog, setShowNameDialog] = useState(false);
+  const [showComingSoonDialog, setShowComingSoonDialog] = useState(false);
   const [newUsername, setNewUsername] = useState(username);
 
   const startBattleMutation = useMutation({
     mutationFn: async (opponentType: string) => {
-      return apiRequest("POST", "/api/battles", { opponentType });
+      return apiRequest("POST", "/api/battles", { opponentType, username });
     },
     onSuccess: async (res) => {
       const data = await res.json();
       navigate(`/battle/${data.id}`);
+    },
+    onError: (error) => {
+      console.error("Failed to start battle:", error);
     }
   });
 
   const handleStartBattle = (opponentType: string) => {
+    if (opponentType === "human") {
+      // Show the "Coming Soon" dialog for human battles
+      setShowComingSoonDialog(true);
+      return;
+    }
+    
     if (username === "Guest") {
       setShowNameDialog(true);
     } else {
@@ -110,6 +120,7 @@ export default function Home() {
 
       <Leaderboard />
 
+      {/* Username Dialog */}
       <Dialog open={showNameDialog} onOpenChange={setShowNameDialog}>
         <DialogContent>
           <DialogHeader>
@@ -126,6 +137,22 @@ export default function Home() {
           />
           <DialogFooter>
             <Button onClick={handleNameSubmit}>Save & Start Battle</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Coming Soon Dialog */}
+      <Dialog open={showComingSoonDialog} onOpenChange={setShowComingSoonDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Coming Soon!</DialogTitle>
+            <DialogDescription>
+              Battles against other human players will be available in a future update. 
+              In the meantime, challenge yourself against our advanced AI opponents!
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button onClick={() => setShowComingSoonDialog(false)}>Got it</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

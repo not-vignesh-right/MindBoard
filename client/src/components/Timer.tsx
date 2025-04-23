@@ -1,4 +1,4 @@
-import { useState, useEffect, useImperativeHandle, forwardRef } from "react";
+import { useState, useEffect, useImperativeHandle, forwardRef, useCallback } from "react";
 
 interface TimerProps {
   duration: number;
@@ -8,10 +8,26 @@ interface TimerProps {
 const Timer = forwardRef(({ duration, onExpire }: TimerProps, ref) => {
   const [timeRemaining, setTimeRemaining] = useState(duration);
   const [timerActive, setTimerActive] = useState(true);
+  const [timerStarted, setTimerStarted] = useState(false);
   
   // For circle animation
   const circumference = 283; // 2 * pi * 45 (circle radius)
   
+  // Handle timer expiration
+  const handleTimerExpire = useCallback(() => {
+    setTimerActive(false);
+    onExpire();
+  }, [onExpire]);
+  
+  // Initialize timer
+  useEffect(() => {
+    if (!timerStarted) {
+      setTimeRemaining(duration);
+      setTimerStarted(true);
+    }
+  }, [duration, timerStarted]);
+  
+  // Timer countdown logic
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
     
@@ -20,8 +36,7 @@ const Timer = forwardRef(({ duration, onExpire }: TimerProps, ref) => {
         setTimeRemaining(prevTime => {
           if (prevTime <= 1) {
             if (interval) clearInterval(interval);
-            setTimerActive(false);
-            onExpire();
+            handleTimerExpire();
             return 0;
           }
           return prevTime - 1;
@@ -32,13 +47,14 @@ const Timer = forwardRef(({ duration, onExpire }: TimerProps, ref) => {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [timerActive, timeRemaining, onExpire]);
+  }, [timerActive, timeRemaining, handleTimerExpire]);
   
   useImperativeHandle(ref, () => ({
     stopTimer: () => {
       setTimerActive(false);
     },
-    getTimeRemaining: () => timeRemaining
+    getTimeRemaining: () => timeRemaining,
+    isActive: () => timerActive
   }));
   
   // Format time as MM:SS
