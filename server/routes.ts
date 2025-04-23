@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { z } from "zod";
 import { insertBattleSchema } from "@shared/schema";
-import { generatePrompt, generateAIResponse, evaluateBattle } from "./openai";
+import { generatePrompt, generateAIResponse, evaluateBattle } from "./grok";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Get or create a new guest user
