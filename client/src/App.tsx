@@ -51,8 +51,9 @@ function App() {
 
   useEffect(() => {
     // Save username to localStorage when it changes
-    if (username !== "Guest") {
+    if (username && username !== "Guest") {
       localStorage.setItem("mindboard-username", username);
+      console.log("Username saved to localStorage:", username);
     }
   }, [username]);
 
