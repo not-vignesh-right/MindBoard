@@ -1,0 +1,37 @@
+[08:25:17.765] Cloning github.com/not-vignesh-right/mind-board-new (Branch: main, Commit: 9a841f5)
+[08:25:18.288] Cloning completed: 522.000ms
+[08:25:19.229] Restored build cache from previous deployment (KLnfNxFHpxfbZJTHefyz4XBydonw)
+[08:25:19.387] Running build in Washington, D.C., USA (East) – iad1
+[08:25:19.990] Running "vercel build"
+[08:25:20.538] Vercel CLI 41.6.2
+[08:25:21.335] Installing dependencies...
+[08:25:22.968] 
+[08:25:22.969] up to date in 1s
+[08:25:22.970] 
+[08:25:22.970] 65 packages are looking for funding
+[08:25:22.971]   run `npm fund` for details
+[08:25:23.148] 
+[08:25:23.149] > rest-express@1.0.0 build
+[08:25:23.149] > vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+[08:25:23.149] 
+[08:25:23.515] [36mvite v5.4.14 [32mbuilding for production...[36m[39m
+[08:25:23.946] transforming...
+[08:25:24.043] Browserslist: browsers data (caniuse-lite) is 6 months old. Please run:
+[08:25:24.044]   npx update-browserslist-db@latest
+[08:25:24.045]   Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[08:25:29.126] [32m✓[39m 1713 modules transformed.
+[08:25:29.465] rendering chunks...
+[08:25:29.474] computing gzip size...
+[08:25:29.490] [2m../dist/public/[22m[32mindex.html                 [39m[1m[2m  1.45 kB[22m[1m[22m[2m │ gzip:   0.87 kB[22m
+[08:25:29.491] [2m../dist/public/[22m[2massets/[22m[35mindex-CRyoMe4c.css  [39m[1m[2m 62.68 kB[22m[1m[22m[2m │ gzip:  11.26 kB[22m
+[08:25:29.492] [2m../dist/public/[22m[2massets/[22m[36mindex-DBkeIQTF.js   [39m[1m[2m325.81 kB[22m[1m[22m[2m │ gzip: 104.04 kB[22m
+[08:25:29.492] [32m✓ built in 5.58s[39m
+[08:25:29.561] ✘ [ERROR] Unexpected end of file
+[08:25:29.561] 
+[08:25:29.561]     server/routes.ts:256:0:
+[08:25:29.562]       256 │ 
+[08:25:29.562]           ╵ ^
+[08:25:29.562] 
+[08:25:29.563] 1 error
+[08:25:29.575] Error: Command "npm run build" exited with 1
+[08:25:29.899] 
