@@ -1,20 +1,19 @@
 import OpenAI from "openai";
 import { EvaluationRequest, EvaluationResponse } from "@/lib/types";
 
-// Configure xAI client (uses OpenAI library with custom baseURL)
-const xai = new OpenAI({ 
-  baseURL: "https://api.x.ai/v1", 
-  apiKey: process.env.XAI_API_KEY,
+// Configure OpenAI client
+const openai = new OpenAI({ 
+  apiKey: process.env.OPENAI_API_KEY,
   timeout: 60000, // 60 seconds timeout
   maxRetries: 3   // Retry up to 3 times
 });
 
 // Set this to false to use the API with real calls
 // Set this to true for testing without API calls
-const FORCE_OFFLINE_MODE = true;
+const FORCE_OFFLINE_MODE = false;
 
 // Log API key status (without revealing the key)
-console.log("xAI API Key Status:", process.env.XAI_API_KEY ? "Present" : "Missing");
+console.log("OpenAI API Key Status:", process.env.OPENAI_API_KEY ? "Present" : "Missing");
 console.log("Offline Mode:", FORCE_OFFLINE_MODE ? "Enabled" : "Disabled");
 
 /**

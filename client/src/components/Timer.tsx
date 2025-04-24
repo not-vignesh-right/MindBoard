@@ -38,14 +38,10 @@ const Timer = forwardRef(({
   
   // Initialize timer
   useEffect(() => {
-    if (!timerStarted) {
-      // Initialize in useEffect to avoid React warnings
-      setTimeout(() => {
-        setTimeRemaining(duration);
-        setTimerStarted(true);
-      }, 0);
-    }
-  }, [duration, timerStarted]);
+    // Initialize in useEffect to avoid React warnings
+    setTimeRemaining(duration);
+    setTimerStarted(true);
+  }, []);
   
   // Timer countdown logic
   useEffect(() => {

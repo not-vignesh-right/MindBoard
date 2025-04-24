@@ -17,6 +17,8 @@ export default function BattlePage() {
   const { username } = useContext(UserContext);
   const battleId = Number(id);
   
+  console.log("Current username in Battle page:", username);
+  
   const [userSolution, setUserSolution] = useState("");
   const [charCount, setCharCount] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);

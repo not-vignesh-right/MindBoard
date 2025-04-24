@@ -3,7 +3,7 @@ import { EvaluationRequest, EvaluationResponse } from "@/lib/types";
 
 // Set this to true to force the app to work without making any API calls
 // Set this to false to use the API with minimal token usage
-const FORCE_OFFLINE_MODE = true;
+const FORCE_OFFLINE_MODE = false;
 
 // Log API key status (without revealing the key)
 console.log("OpenAI API Key Status:", process.env.OPENAI_API_KEY ? "Present" : "Missing");
