@@ -24,8 +24,10 @@ export default function Home() {
   const [newUsername, setNewUsername] = useState(username);
 
   const startBattleMutation = useMutation({
-    mutationFn: async (opponentType: string) => {
-      return apiRequest("POST", "/api/battles", { opponentType, username });
+    mutationFn: async (params: {opponentType: string; currentUsername: string}) => {
+      const { opponentType, currentUsername } = params;
+      console.log("Starting battle with username:", currentUsername);
+      return apiRequest("POST", "/api/battles", { opponentType, username: currentUsername });
     },
     onSuccess: async (res) => {
       const data = await res.json();
@@ -46,15 +48,28 @@ export default function Home() {
     if (username === "Guest") {
       setShowNameDialog(true);
     } else {
-      startBattleMutation.mutate(opponentType);
+      startBattleMutation.mutate({
+        opponentType,
+        currentUsername: username
+      });
     }
   };
 
   const handleNameSubmit = () => {
     if (newUsername.trim().length > 0) {
-      setUsername(newUsername.trim());
+      // Store the trimmed username before setting it to ensure consistency
+      const trimmedUsername = newUsername.trim();
+      console.log("Setting username to:", trimmedUsername);
+      
+      // Update the username in context
+      setUsername(trimmedUsername);
       setShowNameDialog(false);
-      startBattleMutation.mutate("ai"); // Default to AI battle
+      
+      // Start the battle with the new username
+      startBattleMutation.mutate({
+        opponentType: "ai", // Default to AI battle
+        currentUsername: trimmedUsername
+      });
     }
   };
 
