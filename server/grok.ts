@@ -66,9 +66,9 @@ export async function generatePrompt(): Promise<string> {
   }
   
   try {
-    // Use Grok to generate a creative prompt
-    const response = await xai.chat.completions.create({
-      model: "grok-2-1212", 
+    // Use OpenAI to generate a creative prompt
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024
       messages: [
         { 
           role: "system", 
@@ -131,18 +131,18 @@ export async function generateAIResponse(prompt: string): Promise<string> {
     }
   }
   
-  // Check if we have an API key before attempting to call xAI
-  if (!process.env.XAI_API_KEY) {
-    console.error("Error: xAI API key is missing");
+  // Check if we have an API key before attempting to call OpenAI
+  if (!process.env.OPENAI_API_KEY) {
+    console.error("Error: OpenAI API key is missing");
     return fallbackResponse;
   }
   
   try {
     console.log("Generating AI response for prompt:", prompt.substring(0, 30) + "...");
     
-    // Use Grok model with minimal prompt and token usage
-    const response = await xai.chat.completions.create({
-      model: "grok-2-1212",
+    // Use GPT-4o model with minimal prompt and token usage
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       messages: [
         { 
           role: "system", 
@@ -160,7 +160,7 @@ export async function generateAIResponse(prompt: string): Promise<string> {
     const aiResponse = response.choices[0]?.message?.content?.trim();
     
     if (!aiResponse) {
-      console.error("Empty response received from xAI");
+      console.error("Empty response received from OpenAI");
       return fallbackResponse;
     }
     
@@ -170,11 +170,11 @@ export async function generateAIResponse(prompt: string): Promise<string> {
     
     // Check for specific error types and handle accordingly
     if (error.code === 'invalid_api_key') {
-      console.error("Invalid API key. Please check your xAI API key.");
+      console.error("Invalid API key. Please check your OpenAI API key.");
     } else if (error.status === 429) {
       console.error("Rate limit exceeded. Please try again later.");
     } else if (error.status === 500 || error.status === 503) {
-      console.error("xAI service is temporarily unavailable.");
+      console.error("OpenAI service is temporarily unavailable.");
     }
     
     return fallbackResponse;
@@ -360,18 +360,18 @@ export async function evaluateBattle(data: EvaluationRequest): Promise<Evaluatio
     return createFallbackEvaluation(data, userWins);
   }
   
-  // Check if we have an API key before attempting to call xAI
-  if (!process.env.XAI_API_KEY) {
-    console.error("Error: xAI API key is missing");
+  // Check if we have an API key before attempting to call OpenAI
+  if (!process.env.OPENAI_API_KEY) {
+    console.error("Error: OpenAI API key is missing");
     return createFallbackEvaluation(data, true);
   }
   
   try {
-    console.log("Evaluating battle using Grok...");
+    console.log("Evaluating battle using OpenAI...");
     
-    // Use Grok to evaluate the solutions with improved judgment criteria
-    const response = await xai.chat.completions.create({
-      model: "grok-2-1212",
+    // Use OpenAI to evaluate the solutions with improved judgment criteria
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024
       messages: [
         { 
           role: "system", 
@@ -430,7 +430,7 @@ export async function evaluateBattle(data: EvaluationRequest): Promise<Evaluatio
 
     // Handle possible null response
     if (!response.choices[0]?.message?.content) {
-      console.error("Empty evaluation response received from xAI");
+      console.error("Empty evaluation response received from OpenAI");
       return createFallbackEvaluation(data, false);
     }
     
@@ -441,11 +441,11 @@ export async function evaluateBattle(data: EvaluationRequest): Promise<Evaluatio
     
     // Check for specific error types and handle accordingly
     if (error.code === 'invalid_api_key') {
-      console.error("Invalid API key. Please check your xAI API key.");
+      console.error("Invalid API key. Please check your OpenAI API key.");
     } else if (error.status === 429) {
       console.error("Rate limit exceeded. Please try again later.");
     } else if (error.status === 500 || error.status === 503) {
-      console.error("xAI service is temporarily unavailable.");
+      console.error("OpenAI service is temporarily unavailable.");
     }
     
     // Return fallback evaluation where user wins
