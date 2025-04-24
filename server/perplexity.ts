@@ -1,26 +1,19 @@
-import OpenAI from "openai";
 import { EvaluationRequest, EvaluationResponse } from "@/lib/types";
 
-// Configure OpenAI client
-const openai = new OpenAI({ 
-  apiKey: process.env.OPENAI_API_KEY,
-  timeout: 60000, // 60 seconds timeout
-  maxRetries: 3   // Retry up to 3 times
-});
-
-// Set this to true to work without making any API calls
-// We'll set this to true while integrating a free AI alternative
-const FORCE_OFFLINE_MODE = true;
+// Flag to control API usage
+// Setting to true will use offline mode with pre-defined responses
+// Setting to false will attempt to use the Perplexity API (requires API key)
+const FORCE_OFFLINE_MODE = false;
 
 // Log API key status (without revealing the key)
-console.log("OpenAI API Key Status:", process.env.OPENAI_API_KEY ? "Present" : "Missing");
+console.log("Perplexity API Key Status:", process.env.PERPLEXITY_API_KEY ? "Present" : "Missing");
 console.log("Offline Mode:", FORCE_OFFLINE_MODE ? "Enabled" : "Disabled");
 
 /**
- * Generate a creative prompt for a battle
+ * Generate a creative prompt for a battle using Perplexity AI
  */
 export async function generatePrompt(): Promise<string> {
-  // Fallback prompts in case the API fails or in offline mode - with more tech focus
+  // Fallback prompts in case the API fails or in offline mode
   const fallbackPrompts = [
     // Technology & Computing Prompts
     "Design a new programming language that uses natural human gestures instead of typing",
@@ -28,11 +21,6 @@ export async function generatePrompt(): Promise<string> {
     "Design a smart city infrastructure that respects privacy while enhancing safety",
     "Invent a new social media platform that promotes genuine human connection",
     "Design an AI assistant for mental health that respects ethical boundaries",
-    "Create a digital solution to combat misinformation that doesn't restrict free speech",
-    "Design a technology that helps preserve endangered languages",
-    "Invent a new cryptocurrency that solves current blockchain environmental issues",
-    "Design a system that makes complex data visualizations accessible to blind users",
-    "Create a technology that lets people experience each other's emotions remotely",
     
     // Science & Innovation Prompts
     "Design a device that could capture and store carbon dioxide from the atmosphere",
@@ -40,68 +28,67 @@ export async function generatePrompt(): Promise<string> {
     "Invent a material that could replace plastic in all common applications",
     "Design a sustainable water purification system for remote communities",
     "Create a solution for managing e-waste in urban environments",
-    "Design a novel renewable energy technology for individual homes",
-    "Invent a new type of battery with 10x current capacity",
-    "Design a device that enhances human productivity through neural interfaces",
-    "Create a new form of agriculture suitable for Mars colonization",
-    "Invent a new encryption method using biological principles",
     
     // AI & Future Tech Prompts
     "Design an AI system that could help predict and prevent natural disasters",
     "Create a fair and transparent algorithm for college admissions",
     "Invent a new type of quantum computing application for everyday use",
     "Design a robot that could help restore damaged ecosystems",
-    "Create an AI that can translate animal communication to human language",
-    "Design a virtual reality experience that helps people overcome phobias",
-    "Invent a new form of digital democracy that increases participation",
-    "Design an AI system that creates personalized learning experiences",
-    "Create a technology that helps preserve human knowledge for 10,000 years",
-    "Invent a new way to archive digital information that doesn't degrade"
+    "Create an AI that can translate animal communication to human language"
   ];
   
   // If in offline mode, use fallback prompts without API call
-  if (FORCE_OFFLINE_MODE) {
+  if (FORCE_OFFLINE_MODE || !process.env.PERPLEXITY_API_KEY) {
     console.log("Using offline mode for prompt generation");
     return fallbackPrompts[Math.floor(Math.random() * fallbackPrompts.length)];
   }
   
   try {
-    // Use OpenAI to generate a creative prompt
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024
-      messages: [
-        { 
-          role: "system", 
-          content: "Generate ONE creative prompt (maximum 15 words). Only output the prompt." 
-        }
-      ],
-      temperature: 0.7,
-      max_tokens: 30
+    console.log("Generating prompt using Perplexity API...");
+    
+    // Call Perplexity API to generate a creative prompt
+    const response = await fetch("https://api.perplexity.ai/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.PERPLEXITY_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "llama-3.1-sonar-small-128k-online",
+        messages: [
+          {
+            role: "system",
+            content: "Generate ONE creative prompt (maximum 15 words) for a creative challenge. The prompt should be about designing, inventing, or creating something innovative."
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 30
+      })
     });
 
-    return response.choices[0]?.message?.content?.trim() || fallbackPrompts[Math.floor(Math.random() * fallbackPrompts.length)];
+    if (!response.ok) {
+      throw new Error(`Perplexity API responded with status ${response.status}`);
+    }
+
+    const data = await response.json();
+    const generatedPrompt = data.choices[0]?.message?.content?.trim();
+    
+    // Return the generated prompt or fall back to a predefined one
+    return generatedPrompt || fallbackPrompts[Math.floor(Math.random() * fallbackPrompts.length)];
   } catch (error) {
-    console.error("Error generating prompt:", error);
+    console.error("Error generating prompt with Perplexity:", error);
     return fallbackPrompts[Math.floor(Math.random() * fallbackPrompts.length)];
   }
 }
 
 /**
- * Generate an AI response to a prompt
+ * Generate an AI response to a prompt using Perplexity
  */
 export async function generateAIResponse(prompt: string): Promise<string> {
   // Define a fallback AI response content
   const fallbackResponse = "The AI was unable to generate a solution at this time due to technical difficulties. According to the rules, when AI fails to generate a response, the user automatically wins this round.";
   
-  // Custom responses for each prompt to ensure relevance
-  const promptResponses: Record<string, string[]> = {
-    "Design a flying classroom that can travel anywhere in the world": [
-      "My design for a flying classroom combines aerodynamic principles with educational functionality. The structure uses lightweight carbon fiber materials with retractable wings powered by sustainable electric engines. Inside, reconfigurable learning spaces adapt to different teaching styles with smart boards, breakout pods, and observation decks. The classroom features AR windows that overlay information about locations below, transforming geography lessons into immersive experiences. Solar panels and wind turbines provide sustainable energy, while satellite connectivity ensures students remain connected to educational resources worldwide."
-    ],
-    // Other prompt responses omitted for brevity
-  };
-  
-  // Generic responses for prompts without specific responses - tailored for common prompt types
+  // Generic responses for prompts - tailored for common prompt types
   const genericResponses = [
     // Technology Innovation Response
     "My solution uses a distributed network of quantum-encrypted nodes that can process information in parallel while maintaining data integrity. The system incorporates adaptive learning algorithms that improve efficiency as usage patterns emerge. I've designed a modular architecture that can be deployed incrementally, with each component being self-contained yet interconnected through standardized APIs. Energy requirements are managed through a combination of renewable sources and advanced power management techniques. The user interface adapts to individual preferences while maintaining a consistent experience across different platforms and abilities.",
@@ -116,65 +103,58 @@ export async function generateAIResponse(prompt: string): Promise<string> {
     "I've designed a platform that connects people based on complementary skills rather than similar interests, creating diverse networks that solve problems more effectively. The system uses reputation mechanisms that reward helpful behaviors rather than popularity. Implementation begins with small community pilots that generate data for subsequent refinement. Privacy controls are granular but intuitive, allowing users to meaningfully control their data. The business model is cooperative rather than extractive, ensuring sustainability through alignment with user interests."
   ];
   
-  // If in offline mode, use appropriate responses for the prompt
-  if (FORCE_OFFLINE_MODE) {
+  // If in offline mode, use generic responses without API call
+  if (FORCE_OFFLINE_MODE || !process.env.PERPLEXITY_API_KEY) {
     console.log("Using offline mode for AI response generation");
-    
-    // Check if we have specific responses for this prompt
-    if (prompt in promptResponses) {
-      // Use a response specific to this prompt
-      const specificResponses = promptResponses[prompt];
-      return specificResponses[Math.floor(Math.random() * specificResponses.length)];
-    } else {
-      // Use a generic response for prompts we don't have specific answers for
-      return genericResponses[Math.floor(Math.random() * genericResponses.length)];
-    }
-  }
-  
-  // Check if we have an API key before attempting to call OpenAI
-  if (!process.env.OPENAI_API_KEY) {
-    console.error("Error: OpenAI API key is missing");
-    return fallbackResponse;
+    return genericResponses[Math.floor(Math.random() * genericResponses.length)];
   }
   
   try {
     console.log("Generating AI response for prompt:", prompt.substring(0, 30) + "...");
     
-    // Use GPT-4o model with minimal prompt and token usage
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-      messages: [
-        { 
-          role: "system", 
-          content: "Be creative. Write a brief solution (120-150 words) to the prompt. Be original and practical." 
-        },
-        {
-          role: "user",
-          content: prompt
-        }
-      ],
-      temperature: 0.7,
-      max_tokens: 200
+    // Call Perplexity API to generate a response to the prompt
+    const response = await fetch("https://api.perplexity.ai/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.PERPLEXITY_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "llama-3.1-sonar-small-128k-online",
+        messages: [
+          {
+            role: "system",
+            content: "Be creative. Write a brief solution (120-150 words) to the prompt. Be original and practical."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 200
+      })
     });
 
-    const aiResponse = response.choices[0]?.message?.content?.trim();
+    if (!response.ok) {
+      throw new Error(`Perplexity API responded with status ${response.status}`);
+    }
+
+    const data = await response.json();
+    const aiResponse = data.choices[0]?.message?.content?.trim();
     
     if (!aiResponse) {
-      console.error("Empty response received from OpenAI");
+      console.error("Empty response received from Perplexity");
       return fallbackResponse;
     }
     
     return aiResponse;
-  } catch (error: any) {
-    console.error("Error generating AI response:", error);
+  } catch (error) {
+    console.error("Error generating AI response with Perplexity:", error);
     
     // Check for specific error types and handle accordingly
-    if (error.code === 'invalid_api_key') {
-      console.error("Invalid API key. Please check your OpenAI API key.");
-    } else if (error.status === 429) {
-      console.error("Rate limit exceeded. Please try again later.");
-    } else if (error.status === 500 || error.status === 503) {
-      console.error("OpenAI service is temporarily unavailable.");
+    if (error instanceof Error) {
+      console.error(error.message);
     }
     
     return fallbackResponse;
@@ -182,7 +162,7 @@ export async function generateAIResponse(prompt: string): Promise<string> {
 }
 
 /**
- * Evaluate user and AI solutions
+ * Evaluate user and AI solutions using Perplexity
  */
 export async function evaluateBattle(data: EvaluationRequest): Promise<EvaluationResponse> {
   // Check if AI had technical difficulties before attempting evaluation
@@ -217,7 +197,7 @@ export async function evaluateBattle(data: EvaluationRequest): Promise<Evaluatio
     };
   }
   
-  // Helper function to create a fallback evaluation when API calls fail
+  // Helper function to create a fallback evaluation
   function createFallbackEvaluation(data: EvaluationRequest, userWins: boolean): EvaluationResponse {
     // Random scores with some variance but ensuring the winner has higher total
     const userOriginalityScore = Math.floor(Math.random() * 20) + (userWins ? 75 : 60);
@@ -346,7 +326,7 @@ export async function evaluateBattle(data: EvaluationRequest): Promise<Evaluatio
   }
   
   // If in offline mode, use a random evaluation with user winning most of the time (80%)
-  if (FORCE_OFFLINE_MODE) {
+  if (FORCE_OFFLINE_MODE || !process.env.PERPLEXITY_API_KEY) {
     console.log("Using offline mode for battle evaluation");
     
     // Check if the user's solution is insufficient (less than 20 characters)
@@ -360,95 +340,94 @@ export async function evaluateBattle(data: EvaluationRequest): Promise<Evaluatio
     return createFallbackEvaluation(data, userWins);
   }
   
-  // Check if we have an API key before attempting to call OpenAI
-  if (!process.env.OPENAI_API_KEY) {
-    console.error("Error: OpenAI API key is missing");
-    return createFallbackEvaluation(data, true);
-  }
-  
   try {
-    console.log("Evaluating battle using OpenAI...");
+    console.log("Evaluating battle using Perplexity...");
     
-    // Use OpenAI to evaluate the solutions with improved judgment criteria
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024
-      messages: [
-        { 
-          role: "system", 
-          content: `You are an expert judge evaluating creative solutions to technical challenges. 
-          Rate two solutions (User and AI) on three criteria:
-          
-          1. Originality (0-100): Novelty, uniqueness, and creative thinking
-             - High scores: Truly innovative ideas that haven't been widely implemented
-             - Low scores: Common or derivative approaches with little innovation
-          
-          2. Logic (0-100): Practicality, feasibility, and sound reasoning
-             - High scores: Well-thought-out solutions that could be implemented
-             - Low scores: Impractical ideas with major logical flaws
-          
-          3. Expression (0-100): Clarity, engagement, and effective communication
-             - High scores: Clear, concise, and compelling communication
-             - Low scores: Confusing, verbose, or poorly structured writing
-          
-          For each category, provide specific, constructive feedback (2-3 sentences).
-          Calculate the total score for each solution (sum of all three categories).
-          Determine the winner based on the higher total score.
-          
-          Return your evaluation in JSON format only with this structure:
+    // Call Perplexity API to evaluate the solutions
+    const response = await fetch("https://api.perplexity.ai/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.PERPLEXITY_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "llama-3.1-sonar-small-128k-online",
+        messages: [
+          { 
+            role: "system", 
+            content: `You are an expert judge evaluating creative solutions to technical challenges. 
+            Rate two solutions (User and AI) on three criteria:
+            
+            1. Originality (0-100): Novelty, uniqueness, and creative thinking
+              - High scores: Truly innovative ideas that haven't been widely implemented
+              - Low scores: Common or derivative approaches with little innovation
+            
+            2. Logic (0-100): Practicality, feasibility, and sound reasoning
+              - High scores: Well-thought-out solutions that could be implemented
+              - Low scores: Impractical ideas with major logical flaws
+            
+            3. Expression (0-100): Clarity, engagement, and effective communication
+              - High scores: Clear, concise, and compelling communication
+              - Low scores: Confusing, verbose, or poorly structured writing
+            
+            For each category, provide specific, constructive feedback (2-3 sentences).
+            Calculate the total score for each solution (sum of all three categories).
+            Determine the winner based on the higher total score.
+            
+            Return your evaluation in JSON format only with this structure:
+            {
+              "userScore": {
+                "originality": number,
+                "logic": number,
+                "expression": number,
+                "originalityFeedback": string,
+                "logicFeedback": string,
+                "expressionFeedback": string,
+                "total": number
+              },
+              "aiScore": {
+                "originality": number,
+                "logic": number,
+                "expression": number,
+                "originalityFeedback": string,
+                "logicFeedback": string,
+                "expressionFeedback": string,
+                "total": number
+              },
+              "judgeFeedback": string,
+              "winner": "user" or "ai"
+            }`
+          },
           {
-            "userScore": {
-              "originality": number,
-              "logic": number,
-              "expression": number,
-              "originalityFeedback": string,
-              "logicFeedback": string,
-              "expressionFeedback": string,
-              "total": number
-            },
-            "aiScore": {
-              "originality": number,
-              "logic": number,
-              "expression": number,
-              "originalityFeedback": string,
-              "logicFeedback": string,
-              "expressionFeedback": string,
-              "total": number
-            },
-            "judgeFeedback": string,
-            "winner": "user" or "ai"
-          }`
-        },
-        {
-          role: "user",
-          content: `Prompt: ${data.prompt}\n\nUser Solution: ${data.userSolution}\n\nAI Solution: ${data.aiSolution}`
-        }
-      ],
-      temperature: 0.4, // Lower temperature for more consistent evaluations
-      response_format: { type: "json_object" },
-      max_tokens: 800 // Increased to allow for more detailed feedback
+            role: "user",
+            content: `Prompt: ${data.prompt}\n\nUser Solution: ${data.userSolution}\n\nAI Solution: ${data.aiSolution}`
+          }
+        ],
+        temperature: 0.4,
+        response_format: { type: "json_object" },
+        max_tokens: 800
+      })
     });
 
+    if (!response.ok) {
+      throw new Error(`Perplexity API responded with status ${response.status}`);
+    }
+
+    const result = await response.json();
+    
     // Handle possible null response
-    if (!response.choices[0]?.message?.content) {
-      console.error("Empty evaluation response received from OpenAI");
-      return createFallbackEvaluation(data, false);
+    if (!result.choices[0]?.message?.content) {
+      console.error("Empty evaluation response received from Perplexity");
+      return createFallbackEvaluation(data, true); // Let user win by default in case of API failure
     }
     
-    const result = JSON.parse(response.choices[0].message.content);
-    return result as EvaluationResponse;
-  } catch (error: any) {
-    console.error("Error evaluating battle:", error);
-    
-    // Check for specific error types and handle accordingly
-    if (error.code === 'invalid_api_key') {
-      console.error("Invalid API key. Please check your OpenAI API key.");
-    } else if (error.status === 429) {
-      console.error("Rate limit exceeded. Please try again later.");
-    } else if (error.status === 500 || error.status === 503) {
-      console.error("OpenAI service is temporarily unavailable.");
-    }
+    // Parse the JSON response
+    const evaluation = JSON.parse(result.choices[0].message.content);
+    return evaluation as EvaluationResponse;
+  } catch (error) {
+    console.error("Error evaluating battle with Perplexity:", error);
     
     // Return fallback evaluation where user wins
-    return createFallbackEvaluation(data, false);
+    return createFallbackEvaluation(data, true);
   }
 }

@@ -3,7 +3,8 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { z } from "zod";
 import { insertBattleSchema } from "@shared/schema";
-import { generatePrompt, generateAIResponse, evaluateBattle } from "./grok";
+// Using Perplexity instead of OpenAI since it's free
+import { generatePrompt, generateAIResponse, evaluateBattle } from "./perplexity";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Get or create a new guest user
