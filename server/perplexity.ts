@@ -1,20 +1,19 @@
 import { EvaluationRequest, EvaluationResponse } from "@/lib/types";
 
-// Flag to control API usage
-// Setting to true will use offline mode with pre-defined responses
-// Setting to false will attempt to use the Perplexity API (requires API key)
-// Read from environment variable, default to true if not provided
-const FORCE_OFFLINE_MODE = process.env.FORCE_OFFLINE_MODE !== 'false';
+// Flag to control API usage 
+// We're using a completely free solution by forcing offline mode permanently
+// This means we don't need an API key or paid services
+const FORCE_OFFLINE_MODE = true;
 
-// Log API key status (without revealing the key)
-console.log("Perplexity API Key Status:", process.env.PERPLEXITY_API_KEY ? "Present" : "Missing");
-console.log("Offline Mode:", FORCE_OFFLINE_MODE ? "Enabled" : "Disabled");
+// Log offline mode status
+console.log("Using completely free offline mode - no API key required");
+console.log("Offline Mode: Always Enabled");
 
 /**
  * Generate a creative prompt for a battle using Perplexity AI
  */
 export async function generatePrompt(): Promise<string> {
-  // Fallback prompts in case the API fails or in offline mode
+  // Creative prompts for the offline mode - no API needed
   const fallbackPrompts = [
     // Technology & Computing Prompts
     "Design a new programming language that uses natural human gestures instead of typing",
@@ -22,6 +21,8 @@ export async function generatePrompt(): Promise<string> {
     "Design a smart city infrastructure that respects privacy while enhancing safety",
     "Invent a new social media platform that promotes genuine human connection",
     "Design an AI assistant for mental health that respects ethical boundaries",
+    "Create a new type of search engine that focuses on knowledge connections",
+    "Design a digital museum that adapts to each visitor's interests",
     
     // Science & Innovation Prompts
     "Design a device that could capture and store carbon dioxide from the atmosphere",
@@ -29,13 +30,38 @@ export async function generatePrompt(): Promise<string> {
     "Invent a material that could replace plastic in all common applications",
     "Design a sustainable water purification system for remote communities",
     "Create a solution for managing e-waste in urban environments",
+    "Design a self-repairing road surface that adapts to climate conditions",
+    "Invent a biodegradable alternative to cement for construction",
+    
+    // Education & Learning Prompts
+    "Design a learning system that adapts to different cognitive styles",
+    "Create a method for teaching complex math through physical movement",
+    "Invent a way to make history education more immersive and memorable",
+    "Design a classroom environment that enhances focus and creativity",
+    "Create a tool that makes abstract concepts tangible for young learners",
+    
+    // Art & Culture Prompts
+    "Design an instrument that can be played by thought alone",
+    "Create a new form of storytelling that combines multiple senses",
+    "Invent a way to experience another person's emotional state through art",
+    "Design a public art installation that changes based on community input",
+    "Create a new cultural celebration that bridges different traditions",
+    
+    // Health & Wellbeing Prompts
+    "Design a tool that helps people recognize and manage stress in real-time",
+    "Create a healing environment for hospital patients that speeds recovery",
+    "Invent a nutrition system that makes healthy eating intuitive and enjoyable",
+    "Design a solution for making exercise accessible to those with limited mobility",
+    "Create a community-based approach to mental health support",
     
     // AI & Future Tech Prompts
     "Design an AI system that could help predict and prevent natural disasters",
     "Create a fair and transparent algorithm for college admissions",
     "Invent a new type of quantum computing application for everyday use",
     "Design a robot that could help restore damaged ecosystems",
-    "Create an AI that can translate animal communication to human language"
+    "Create an AI that can translate animal communication to human language",
+    "Design a virtual reality system that helps build empathy across cultures",
+    "Invent a human-AI collaboration tool for solving complex global problems"
   ];
   
   // If in offline mode, use fallback prompts without API call
@@ -89,19 +115,37 @@ export async function generateAIResponse(prompt: string): Promise<string> {
   // Define a fallback AI response content
   const fallbackResponse = "The AI was unable to generate a solution at this time due to technical difficulties. According to the rules, when AI fails to generate a response, the user automatically wins this round.";
   
-  // Generic responses for prompts - tailored for common prompt types
+  // Creative AI responses for various prompt types - no API needed
   const genericResponses = [
-    // Technology Innovation Response
+    // Technology Innovation Responses
     "My solution uses a distributed network of quantum-encrypted nodes that can process information in parallel while maintaining data integrity. The system incorporates adaptive learning algorithms that improve efficiency as usage patterns emerge. I've designed a modular architecture that can be deployed incrementally, with each component being self-contained yet interconnected through standardized APIs. Energy requirements are managed through a combination of renewable sources and advanced power management techniques. The user interface adapts to individual preferences while maintaining a consistent experience across different platforms and abilities.",
+    
+    "I propose a multi-layered interface system that translates intention into action through a combination of neural monitoring and predictive algorithms. The core technology uses non-invasive sensors to detect micro-movements and brain activity patterns, which are then processed by an adaptive AI that learns individual user preferences. Implementation is customizable for different environments and abilities, with each component designed to be low-cost and repairable. The entire system operates on open standards, allowing for community-driven improvements and specialized extensions for different applications or disabilities.",
 
-    // Environmental Solution Response
+    // Environmental Solution Responses
     "I propose a bio-inspired system that mimics natural processes to achieve sustainable outcomes. The core technology uses engineered microorganisms that can be programmed for specific tasks without disrupting existing ecosystems. The implementation is scalable from individual buildings to entire cities, with each installation being self-sufficient after initial setup. Materials used are biodegradable or easily recyclable, ensuring minimal environmental impact throughout the lifecycle. The solution integrates with existing infrastructure to minimize disruption while providing immediate benefits to communities.",
+    
+    "My design combines biomimicry with material science to create carbon-capturing structures that function like artificial trees but with efficiency 1000 times greater than natural counterparts. The system uses modular components that can be deployed in urban environments as architectural elements or in remote areas as standalone units. Each module contains specialized microorganisms that convert captured carbon into useful materials like building components or soil amendments. Energy requirements are met through integrated solar and wind collection, making each unit self-sufficient and environmentally neutral.",
 
-    // AI & Computing Response
+    // AI & Computing Responses
     "My approach combines neural networks with symbolic reasoning to create a hybrid system that addresses the limitations of each individual approach. The architecture utilizes federated learning to protect privacy while still benefiting from distributed data processing. Implementation happens in phases, with each phase building on lessons from previous deployments. The system is designed to be explainable, with clear reasoning paths that users can understand and verify. This transparency builds trust while maintaining performance at levels comparable to black-box alternatives.",
+    
+    "I've designed a multi-modal learning system that adapts to individual cognitive styles through an initial assessment phase followed by continuously optimized content delivery. The platform integrates visual, auditory, kinesthetic, and social learning approaches, allowing users to engage with concepts through their preferred modalities while gradually strengthening weaker pathways. Content is structured in interconnected knowledge graphs rather than linear progressions, enabling learners to explore relationships between concepts and build more robust mental models.",
 
-    // Social Innovation Response 
-    "I've designed a platform that connects people based on complementary skills rather than similar interests, creating diverse networks that solve problems more effectively. The system uses reputation mechanisms that reward helpful behaviors rather than popularity. Implementation begins with small community pilots that generate data for subsequent refinement. Privacy controls are granular but intuitive, allowing users to meaningfully control their data. The business model is cooperative rather than extractive, ensuring sustainability through alignment with user interests."
+    // Social Innovation Responses 
+    "I've designed a platform that connects people based on complementary skills rather than similar interests, creating diverse networks that solve problems more effectively. The system uses reputation mechanisms that reward helpful behaviors rather than popularity. Implementation begins with small community pilots that generate data for subsequent refinement. Privacy controls are granular but intuitive, allowing users to meaningfully control their data. The business model is cooperative rather than extractive, ensuring sustainability through alignment with user interests.",
+    
+    "My solution is a community-based wellness system that combines modern health monitoring with traditional social support structures. The core technology is a platform that helps neighborhood groups organize resources and skills to address health challenges collectively. Individuals can request assistance with specific needs while offering their own expertise in return. The system uses simple verification mechanisms to build trust while protecting privacy. Implementation begins with local health providers serving as hubs, gradually transitioning to community self-governance as capacity develops.",
+    
+    // Education & Learning Responses
+    "I've created an embodied learning system that translates abstract mathematical concepts into physical movements and spatial relationships. The approach uses motion capture technology and augmented reality to visualize mathematical principles as students move through specially designed environments. Concepts like functions, derivatives, and geometry become tangible experiences rather than symbolic manipulations. The system adapts to different learning speeds and styles, providing more guidance or challenge based on real-time performance analysis.",
+    
+    "My design centers on an adaptive storytelling engine that makes history education personally relevant and emotionally engaging. The system analyzes curriculum requirements and student interests to generate immersive narratives that accurately portray historical events while highlighting connections to students' lives. Content is delivered through mixed reality experiences that simulate historical environments and social dynamics. The platform includes collaborative elements where students can explore 'what if' scenarios based on alternative historical choices, developing critical thinking about causality and human decision-making.",
+    
+    // Health & Wellbeing Responses
+    "I've designed a stress management system that combines physiological monitoring with environmental modifications and behavioral nudges. The core technology uses wearable sensors to detect early signs of stress through heart rate variability, skin conductance, and breathing patterns. When stress indicators appear, the system responds with personalized interventions—subtle lighting changes, micro-breaks, guided breathing exercises, or cognitive reframing prompts. The approach is preventative rather than reactive, helping users maintain balance before stress becomes overwhelming.",
+    
+    "My solution is a therapeutic environment system that accelerates healing through multisensory optimization. The design incorporates circadian lighting that mimics natural daylight cycles, acoustic treatments that both minimize disruptive noise and introduce healing soundscapes, and airflow systems that deliver beneficial aromatic compounds. The patient experience is personalized through preference learning algorithms that adjust environmental parameters based on physiological responses and reported comfort. Implementation is modular, allowing hospitals to adopt components incrementally as resources allow."
   ];
   
   // If in offline mode, use generic responses without API call

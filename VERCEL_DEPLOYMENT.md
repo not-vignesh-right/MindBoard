@@ -1,19 +1,18 @@
 # Vercel Deployment Guide for MindBoard
 
-This guide provides step-by-step instructions for deploying MindBoard to Vercel. MindBoard is an AI creativity battle platform that uses a free tier of Perplexity AI for creativity evaluation.
+This guide provides step-by-step instructions for deploying MindBoard to Vercel. MindBoard is an AI creativity battle platform that works 100% offline without requiring any paid API services.
 
 ## Prerequisites
 
 1. A GitHub account
 2. A Vercel account (sign up at https://vercel.com)
 3. A PostgreSQL database (we recommend Neon.tech for their free tier)
-4. (Optional) A Perplexity API key (free tier available)
 
 ## Deployment Steps
 
 ### 1. Prepare Your Project for Deployment
 
-Your project is already configured for Vercel deployment with the `vercel.json` file. The offline mode is enabled by default so you don't need a Perplexity API key to run the application.
+Your project is already configured for Vercel deployment with the `vercel.json` file. The application uses a completely free offline mode with predefined creative prompts and AI responses, so you don't need any external API keys.
 
 ### 2. Push Your Code to GitHub
 
@@ -55,10 +54,8 @@ Your project is already configured for Vercel deployment with the `vercel.json` 
    - Output Directory: `dist`
    - Install Command: `npm install`
 
-5. Add the following Environment Variables:
+5. Add the following Environment Variable:
    - `DATABASE_URL`: Your PostgreSQL connection string
-   - `FORCE_OFFLINE_MODE`: Set to "true" if you don't have a Perplexity API key
-   - `PERPLEXITY_API_KEY`: (Optional) Your Perplexity API key if you have one
 
 6. Click "Deploy"
 
@@ -76,11 +73,6 @@ Once the deployment is complete, you can access your application at the URL prov
 
 - Make sure your `DATABASE_URL` environment variable is correctly set in Vercel
 - Verify that your database is publicly accessible or configure Vercel IP allow-listing
-
-### API Key Issues
-
-- If you're using the Perplexity API, make sure your API key is correctly set in Vercel
-- If you don't have a Perplexity API key, ensure `FORCE_OFFLINE_MODE` is set to "true"
 
 ### Build Failures
 
