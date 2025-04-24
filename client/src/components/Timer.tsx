@@ -39,9 +39,13 @@ const Timer = forwardRef(({
   
   // Initialize timer only once when component mounts
   useEffect(() => {
-    // This will run only once after component mounts
-    setTimeRemaining(duration);
-    setTimerStarted(true);
+    // Delay the state update to avoid React warning
+    const timer = setTimeout(() => {
+      setTimeRemaining(duration);
+      setTimerStarted(true);
+    }, 0);
+    
+    return () => clearTimeout(timer);
   }, [duration]);
   
   // Timer countdown logic
