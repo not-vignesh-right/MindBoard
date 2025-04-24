@@ -16,7 +16,7 @@ const Timer = forwardRef(({
   // Initializing state with default values to prevent React warnings about state updates during render
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [timerActive, setTimerActive] = useState(true);
-  const [timerStarted, setTimerStarted] = useState(true);
+  const [timerStarted, setTimerStarted] = useState(false);
   const [submissionAllowed, setSubmissionAllowed] = useState(false);
   
   // For circle animation
@@ -37,12 +37,12 @@ const Timer = forwardRef(({
     }
   }, [onMinimumTimeReached]);
   
-  // Initialize timer
+  // Initialize timer only once when component mounts
   useEffect(() => {
-    // Initialize in useEffect to avoid React warnings
+    // This will run only once after component mounts
     setTimeRemaining(duration);
     setTimerStarted(true);
-  }, []);
+  }, [duration]);
   
   // Timer countdown logic
   useEffect(() => {

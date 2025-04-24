@@ -14,8 +14,11 @@ export default function BattlePage() {
   const [_, navigate] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { username } = useContext(UserContext);
+  const { username, setUsername } = useContext(UserContext);
   const battleId = Number(id);
+  
+  // Local state for name to use in UI
+  const [displayUsername, setDisplayUsername] = useState(username);
   
   console.log("Current username in Battle page:", username);
   
@@ -31,10 +34,29 @@ export default function BattlePage() {
     queryKey: [`/api/battles/${battleId}`],
     enabled: !!battleId
   });
+  
+  // Re-fetch username from localStorage in case context isn't updated yet
+  useEffect(() => {
+    const savedUsername = localStorage.getItem("mindboard-username");
+    if (savedUsername && savedUsername !== username) {
+      console.log("Loading username from localStorage in Battle:", savedUsername);
+      // Update display name and context
+      setDisplayUsername(savedUsername);
+      setUsername(savedUsername);
+    } else {
+      // Set display name to username from context
+      setDisplayUsername(username);
+    }
+  }, [username, setUsername]);
 
   // Submit solution mutation
   const submitSolutionMutation = useMutation({
     mutationFn: async (isAutoSubmit: boolean) => {
+      // Ensure solution is at least 10 characters
+      if (userSolution.trim().length < 10 && !isAutoSubmit) {
+        throw new Error("Solution is too short. Please provide at least 10 characters.");
+      }
+      
       // Use solution as-is, the backend will handle validation
       return await apiRequest("POST", `/api/battles/${battleId}/submit`, { 
         solution: userSolution,
@@ -171,7 +193,7 @@ export default function BattlePage() {
         {/* User Battle Card */}
         <BattleCard
           type="user"
-          title={`${username}'s Solution`}
+          title={`${displayUsername}'s Solution`}
           badge="YOU"
           isSubmitted={isSubmitted}
           solution={userSolution}

@@ -37,10 +37,16 @@ function Router() {
 }
 
 function App() {
-  const [username, setUsername] = useState<string>(() => {
-    return localStorage.getItem("mindboard-username") || "Guest";
-  });
+  const [username, setUsername] = useState<string>("Guest");
 
+  // Load username from localStorage on initial load
+  useEffect(() => {
+    const savedUsername = localStorage.getItem("mindboard-username");
+    if (savedUsername) {
+      setUsername(savedUsername);
+    }
+  }, []);
+  
   // Store username in localStorage whenever it changes
   useEffect(() => {
     if (username && username !== "Guest") {
