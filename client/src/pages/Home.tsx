@@ -63,6 +63,11 @@ export default function Home() {
       
       // Update the username in context
       setUsername(trimmedUsername);
+      
+      // Save to localStorage explicitly
+      localStorage.setItem("mindboard-username", trimmedUsername);
+      console.log("Username saved to localStorage from Home component:", trimmedUsername);
+      
       setShowNameDialog(false);
       
       // Start the battle with the new username

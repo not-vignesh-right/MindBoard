@@ -1,12 +1,37 @@
-# Dependency directories
-node_modules/
-.pnp/
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependencies
+node_modules
+.pnp
 .pnp.js
 
-# Build outputs
-dist/
-build/
-*.tsbuildinfo
+# Testing
+coverage
+.nyc_output
+
+# Production
+dist
+dist-ssr
+*.local
+build
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
 # Environment variables
 .env
@@ -15,33 +40,9 @@ build/
 .env.test.local
 .env.production.local
 
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# Database
+*.sqlite
+*.sqlite3
 
-# Editor directories and files
-.idea/
-.vscode/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# OS specific
-.DS_Store
-Thumbs.db
-
-# Debug
-.pnpm-debug.log*
-
-# Coverage directory used by tools like istanbul
-coverage/
-
-# Replit specific
-.replit
-.config/
-.cache/
+# Vercel
+.vercel

@@ -1,144 +1,94 @@
-# 🎨 MindBoard – The Ultimate AI Creativity Battle Arena
+# MindBoard: AI Creativity Battle Arena
 
-Welcome to **MindBoard**, a real-time multiplayer creativity battle platform where **humans face off against AI** (or each other!) in a challenge of imagination, wit, and expression.
+MindBoard is an innovative AI-powered creativity platform that transforms creative challenges into engaging competitive experiences. Users can battle against AI in timed creative tasks, testing and expanding their imaginative capabilities.
 
-> _🔥 Built during Hackathon 2025 to spark creativity through competitive AI engagement._
+## Features
 
----
+- **Creative Challenges**: Get unique AI-generated prompts to spark your creativity
+- **Timed Battles**: Test your creativity against the clock
+- **Fair Judgment**: AI evaluates solutions based on originality, logic, and expression
+- **Leaderboard**: Track your progress and compete for the top spot
+- **Free AI Integration**: Uses Perplexity AI for prompt generation and evaluation
 
-## 🌐 Live Demo
-🔗 https://mind-board-game.vercel.app/
+## Technologies Used
 
+- **Frontend**: React, TypeScript, Tailwind CSS, shadcn/ui
+- **Backend**: Node.js, Express
+- **Database**: PostgreSQL (via Neon)
+- **AI**: Perplexity API integration
+- **Deployment**: Ready for Vercel
 
----
+## Deployment Instructions for Vercel
 
-## 🚀 What Makes MindBoard Special?
+Follow these steps to deploy MindBoard to Vercel:
 
-| 🔹 Feature                    | ✅ Current | 🛠️ Upcoming     |
-|-----------------------------|------------|------------------|
-| Battle AI or real players   | ✅         |                  |
-| Prompt-based challenges     | ✅         | Category Filters |
-| Timed writing (3 min)       | ✅         | Adjustable Timer |
-| AI evaluation (Grok)        | ✅         | Visual Feedback  |
-| Leaderboard system          | ✅         | Weekly Rewards   |
-| User login & guest mode     | ✅         | Full Profiles    |
-| Mobile responsive UI        | ✅         | Mobile App (RN)  |
-| Score breakdown + AI comments | ✅       | Voice Input 🎤   |
-| Submit after 2 min wait     | ✅         | Custom Timers    |
-| Proper username handling    | ✅         | Profile Images   |
-| Auto-submit when time's up  | ✅         | Save Drafts      |
-| Real-time multiplayer       |            | ✅ Coming Soon!  |
+### 1. Fork/Clone the Repository
 
----
+First, make sure you have the code in your own GitHub repository.
 
-## 🧠 How It Works
+### 2. Set Up a Vercel Account
 
-1. **Enter the Arena** as a guest or user.
-2. **Get a Creative Prompt** like:  
-   _"Invent a sport for zero-gravity planets."_  
-3. **Write Your Response** in just 3 minutes (can submit after 2 min).
-4. **AI Battles Back** if you're vs Grok.
-5. **Both Are Scored** on:
-   - Originality 💡
-   - Logic 🔍
-   - Expression 🎭
-6. **Leaderboard Updates** in real-time!
+If you don't already have a Vercel account, sign up at [vercel.com](https://vercel.com).
 
----
+### 3. Create a New Project on Vercel
 
-## 🛠️ Tech Stack
+- From your Vercel dashboard, click "New Project"
+- Import your GitHub repository
+- Configure the project as follows:
+  - **Framework**: Other
+  - **Build Command**: `npm run build`
+  - **Output Directory**: `dist`
+  - **Install Command**: `npm install`
 
-| Layer     | Tech Used                   |
-|-----------|-----------------------------|
-| Frontend  | React + Vite + TypeScript   |
-| Backend   | Node.js + Express           |
-| AI Engine | xAI Grok                    |
-| Hosting   | Vercel                      |
-| Database  | Vercel Postgres             |
+### 4. Configure Environment Variables
 
----
+Add the following environment variables in the Vercel project settings:
 
-## 📁 Project Structure
+- `DATABASE_URL`: Your PostgreSQL connection string (from Neon or another provider)
+- `PERPLEXITY_API_KEY`: Your Perplexity API key (Optional - get one from [perplexity.ai](https://www.perplexity.ai/))
+- `FORCE_OFFLINE_MODE`: Set to "true" if you don't have a Perplexity API key (or "false" if you do)
 
-```
-📦 root/
-├── client/         # React Frontend
-├── server/         # Express API + Grok logic
-├── shared/         # Shared types/schemas
-└── package.json    # Root scripts
-```
+### 5. Set Up PostgreSQL Database
 
----
+#### Option 1: Neon (Recommended)
 
-## ⚙️ Setup Instructions
+1. Sign up for a free account at [neon.tech](https://neon.tech)
+2. Create a new PostgreSQL database
+3. Get the connection string and add it as `DATABASE_URL` in Vercel
 
-### 🔄 Clone or Fork the Repository
+#### Option 2: Any PostgreSQL Provider
 
-```bash
-git clone https://github.com/yourusername/mindboard.git
-cd mindboard
-```
+1. Set up a PostgreSQL database with your preferred provider
+2. Get the connection string and add it as `DATABASE_URL` in Vercel
 
-### 🔐 Add xAI API Key
+### 6. Deploy
 
-Create a .env file in the root directory:
-```
-XAI_API_KEY=your-xai-api-key
-```
+- Click "Deploy" in Vercel
+- Wait for the build to complete
+- Your application will be live at the provided URL
 
-Get your key from: https://x.ai/
+### 7. Initialize the Database
 
-### 🧪 Run the App Locally
+The database schema will be automatically applied on first run.
 
-```bash
-npm install
-npm run dev
-```
-- App will be available at: `http://localhost:5000`
+## Running Locally for Development
 
-### 🚀 Deploy on Vercel
+1. Clone the repository
+2. Copy `.env.example` to `.env` and set your environment variables
+3. Run `npm install`
+4. Run `npm run dev`
+5. Open `http://localhost:5000` in your browser
 
-1. Push your repository to GitHub
-2. Import to Vercel
-3. Add the environment variable:
-   - `XAI_API_KEY`=your-xai-api-key
-4. Deploy!
+## Getting a Perplexity API Key (Optional)
 
----
+MindBoard can run in offline mode without a Perplexity API key, but if you want to use real AI-generated prompts and evaluations:
 
-## 📜 Commands
+1. Sign up for a Perplexity account at [perplexity.ai](https://www.perplexity.ai/)
+2. Navigate to your account settings or developer console
+3. Create a new API key
+4. Add the key to your environment variables as `PERPLEXITY_API_KEY`
+5. Set `FORCE_OFFLINE_MODE` to "false"
 
-| Command         | Description                    |
-|----------------|--------------------------------|
-| `npm run dev`  | Start dev servers              |
-| `npm run build`| Build React app                |
-| `npm run start`| Run production backend server  |
+## License
 
----
-
-## 🔮 Coming Soon
-
-- 🧑‍🤝‍🧑 Real-time multiplayer rooms
-- 🎨 Custom prompt categories
-- 🧘 Solo practice mode with AI feedback
-- 📈 Profile stats + creativity history
-- 🗣️ Voice-to-text creativity input
-- 🌈 AI-generated illustrations of answers
-- 📱 React Native mobile version
-
----
-
-## ✨ Hackathon Spark
-
-Built by **Vignesh B S** – 💻  
-Aspired to build something **original** and **interactive** – and we did!
-
----
-
-## 💡 Want to Contribute?
-Pull requests welcome. Fork it, battle it, remix it.
-
----
-
-## 🏁 Let the Creativity Games Begin!
-> "The most powerful tool is the human imagination — sharpened by AI."
+This project is licensed under the MIT License - see the LICENSE file for details.
