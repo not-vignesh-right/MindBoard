@@ -64,6 +64,7 @@ export const leaderboard = pgTable("leaderboard", {
   username: text("username").notNull(),
   totalBattles: integer("total_battles").default(0),
   wins: integer("wins").default(0),
+  winRate: integer("win_rate").default(0), // Store as integer (percentage * 100)
   avgScore: integer("avg_score").default(0),
 });
 

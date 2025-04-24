@@ -102,9 +102,19 @@ export async function generateAIResponse(prompt: string): Promise<string> {
     // Other prompt responses omitted for brevity
   };
   
-  // Generic responses for prompts without specific responses
+  // Generic responses for prompts without specific responses - tailored for common prompt types
   const genericResponses = [
-    "My solution addresses this challenge through a multi-layered approach that balances innovation with practicality. I've designed a system that adapts to various user needs while maintaining core functionality. The implementation uses sustainable materials and energy-efficient processes to minimize environmental impact. I've incorporated feedback mechanisms to ensure continuous improvement based on real-world usage. The modular architecture allows for customization across different contexts while maintaining a cohesive user experience. This approach solves the immediate challenge while creating a foundation for future developments."
+    // Technology Innovation Response
+    "My solution uses a distributed network of quantum-encrypted nodes that can process information in parallel while maintaining data integrity. The system incorporates adaptive learning algorithms that improve efficiency as usage patterns emerge. I've designed a modular architecture that can be deployed incrementally, with each component being self-contained yet interconnected through standardized APIs. Energy requirements are managed through a combination of renewable sources and advanced power management techniques. The user interface adapts to individual preferences while maintaining a consistent experience across different platforms and abilities.",
+
+    // Environmental Solution Response
+    "I propose a bio-inspired system that mimics natural processes to achieve sustainable outcomes. The core technology uses engineered microorganisms that can be programmed for specific tasks without disrupting existing ecosystems. The implementation is scalable from individual buildings to entire cities, with each installation being self-sufficient after initial setup. Materials used are biodegradable or easily recyclable, ensuring minimal environmental impact throughout the lifecycle. The solution integrates with existing infrastructure to minimize disruption while providing immediate benefits to communities.",
+
+    // AI & Computing Response
+    "My approach combines neural networks with symbolic reasoning to create a hybrid system that addresses the limitations of each individual approach. The architecture utilizes federated learning to protect privacy while still benefiting from distributed data processing. Implementation happens in phases, with each phase building on lessons from previous deployments. The system is designed to be explainable, with clear reasoning paths that users can understand and verify. This transparency builds trust while maintaining performance at levels comparable to black-box alternatives.",
+
+    // Social Innovation Response 
+    "I've designed a platform that connects people based on complementary skills rather than similar interests, creating diverse networks that solve problems more effectively. The system uses reputation mechanisms that reward helpful behaviors rather than popularity. Implementation begins with small community pilots that generate data for subsequent refinement. Privacy controls are granular but intuitive, allowing users to meaningfully control their data. The business model is cooperative rather than extractive, ensuring sustainability through alignment with user interests."
   ];
   
   // If in offline mode, use appropriate responses for the prompt
