@@ -13,9 +13,10 @@ const Timer = forwardRef(({
   onMinimumTimeReached,
   minimumTimeBeforeSubmission = 120 // Default 2 minutes before allowing submission
 }: TimerProps, ref) => {
-  const [timeRemaining, setTimeRemaining] = useState(duration);
+  // Initializing state with default values to prevent React warnings about state updates during render
+  const [timeRemaining, setTimeRemaining] = useState(0);
   const [timerActive, setTimerActive] = useState(true);
-  const [timerStarted, setTimerStarted] = useState(false);
+  const [timerStarted, setTimerStarted] = useState(true);
   const [submissionAllowed, setSubmissionAllowed] = useState(false);
   
   // For circle animation

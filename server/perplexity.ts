@@ -3,7 +3,7 @@ import { EvaluationRequest, EvaluationResponse } from "@/lib/types";
 // Flag to control API usage
 // Setting to true will use offline mode with pre-defined responses
 // Setting to false will attempt to use the Perplexity API (requires API key)
-const FORCE_OFFLINE_MODE = false;
+const FORCE_OFFLINE_MODE = true;
 
 // Log API key status (without revealing the key)
 console.log("Perplexity API Key Status:", process.env.PERPLEXITY_API_KEY ? "Present" : "Missing");

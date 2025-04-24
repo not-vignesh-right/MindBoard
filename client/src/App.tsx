@@ -41,16 +41,8 @@ function App() {
     return localStorage.getItem("mindboard-username") || "Guest";
   });
 
+  // Store username in localStorage whenever it changes
   useEffect(() => {
-    // Load username from localStorage if available
-    const savedUsername = localStorage.getItem("mindboard-username");
-    if (savedUsername) {
-      setUsername(savedUsername);
-    }
-  }, []);
-
-  useEffect(() => {
-    // Save username to localStorage when it changes
     if (username && username !== "Guest") {
       localStorage.setItem("mindboard-username", username);
       console.log("Username saved to localStorage:", username);
