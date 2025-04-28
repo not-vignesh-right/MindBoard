@@ -24,19 +24,14 @@ export default function Home() {
   const [newUsername, setNewUsername] = useState(username);
 
   const startBattleMutation = useMutation({
-    mutationFn: async (opponentType: string) => {
-      return apiRequest("POST", "/api/battles", { 
-        opponentType, 
-        username: username || 'Guest' 
-      });
+    mutationFn: async (params: {opponentType: string; currentUsername: string}) => {
+      const { opponentType, currentUsername } = params;
+      console.log("Starting battle with username:", currentUsername);
+      return apiRequest("POST", "/api/battles", { opponentType, username: currentUsername });
     },
     onSuccess: async (res) => {
       const data = await res.json();
-      if (data && data.id) {
-        navigate(`/battle/${data.id}`);
-      } else {
-        console.error("Invalid battle data received");
-      }
+      navigate(`/battle/${data.id}`);
     },
     onError: (error) => {
       console.error("Failed to start battle:", error);
