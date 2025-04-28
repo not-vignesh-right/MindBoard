@@ -9,12 +9,11 @@ async function throwIfResNotOk(res: Response) {
 
 export async function apiRequest(
   method: string,
-  url: string,
-  data?: unknown | undefined,
+  path: string,
+  data?: unknown,
 ): Promise<Response> {
-  // Ensure URL is properly prefixed with API base URL if needed
-  const apiUrl = url.startsWith('http') ? url : url;
-  
+  const apiUrl = path.startsWith('/api') ? path : `/api${path}`;
+
   try {
     const res = await fetch(apiUrl, {
       method,
@@ -26,7 +25,7 @@ export async function apiRequest(
     await throwIfResNotOk(res);
     return res;
   } catch (error) {
-    console.error(`API Request Error (${method} ${url}):`, error);
+    console.error(`API Request Error (${method} ${apiUrl}):`, error);
     throw error;
   }
 }
@@ -39,9 +38,10 @@ export const getQueryFn: <T>(options: {
   async ({ queryKey }) => {
     try {
       const url = queryKey[0] as string;
-      console.log(`Fetching from: ${url}`);
-      
-      const res = await fetch(url, {
+      const apiUrl = url.startsWith('/api') ? url : `/api${url}`; // added api prefixing
+      console.log(`Fetching from: ${apiUrl}`);
+
+      const res = await fetch(apiUrl, {
         credentials: "include",
       });
 
