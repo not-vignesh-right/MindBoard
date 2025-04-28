@@ -1,3 +1,4 @@
+
 {
   "version": 2,
   "buildCommand": "npm run build",
@@ -10,11 +11,6 @@
       "destination": "/"
     }
   ],
-  "functions": {
-    "api/**/*": {
-      "memory": 1024
-    }
-  },
   "env": {
     "NODE_ENV": "production"
   }
