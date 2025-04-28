@@ -7,29 +7,25 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
-export async function apiRequest(
+export const apiRequest = async (
   method: string,
-  url: string,
-  data?: unknown | undefined,
-): Promise<Response> {
-  // Ensure URL is properly prefixed with API base URL if needed
-  const apiUrl = url.startsWith('http') ? url : url;
-  
-  try {
-    const res = await fetch(apiUrl, {
-      method,
-      headers: data ? { "Content-Type": "application/json" } : {},
-      body: data ? JSON.stringify(data) : undefined,
-      credentials: "include",
-    });
+  path: string,
+  body?: unknown,
+): Promise<Response> => {
+  const apiUrl = process.env.NODE_ENV === 'production' 
+    ? `https://${window.location.host}${path}`
+    : path;
 
-    await throwIfResNotOk(res);
-    return res;
-  } catch (error) {
-    console.error(`API Request Error (${method} ${url}):`, error);
-    throw error;
-  }
-}
+  const response = await fetch(apiUrl, {
+    method,
+    headers: body ? { "Content-Type": "application/json" } : {},
+    body: body ? JSON.stringify(body) : undefined,
+    credentials: "include",
+  });
+
+  await throwIfResNotOk(response);
+  return response;
+};
 
 type UnauthorizedBehavior = "returnNull" | "throw";
 export const getQueryFn: <T>(options: {
@@ -40,7 +36,7 @@ export const getQueryFn: <T>(options: {
     try {
       const url = queryKey[0] as string;
       console.log(`Fetching from: ${url}`);
-      
+
       const res = await fetch(url, {
         credentials: "include",
       });
